@@ -1,7 +1,5 @@
 class Api::RunsController < Api::BaseController
 
-  before_action :authenticate_user!
-
   def index
     @runs = Run.all
     respond_to do |format|
