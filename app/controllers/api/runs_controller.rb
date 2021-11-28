@@ -1,5 +1,7 @@
 class Api::RunsController < Api::BaseController
 
+  before_action :authenticate_user!
+
   def index
     @runs = Run.all
     respond_to do |format|
@@ -17,11 +19,6 @@ class Api::RunsController < Api::BaseController
     # puts average_speed
     @run.average_speed = average_speed
     respond_to do |format|
-      # if @product.save && JobApplicationsHelper.validate_application(job_application_params)
-      #   format.json { render json:{"OK": true}, status: :created, location: @job_application }
-      # else
-      #   format.json { render json:{"OK": false}, status: :unprocessable_entity }
-      # end
 
       if @run.save
         format.json { render json: { "OK": true } }
