@@ -1,6 +1,16 @@
 class UsersController < ApplicationController
   before_action :authorized, only: [:auto_login]
 
+  def index
+    @users = User.all
+    render json: @users, status: :ok
+  end
+
+  # GET /users/{username}
+  def show
+    render json: @user, status: :ok
+  end
+
   # REGISTER
   def create
     @user = User.create(user_params)
@@ -24,6 +34,18 @@ class UsersController < ApplicationController
     end
   end
 
+  # PUT /users/{username}
+  def update
+    unless @user.update(user_params)
+      render json: { errors: @user.errors.full_messages },
+             status: :unprocessable_entity
+    end
+  end
+
+  # DELETE /users/{username}
+  def destroy
+    @user.destroy
+  end
 
   def auto_login
     render json: @user
@@ -32,6 +54,6 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.permit(:username, :password, :age)
+    params.permit(:username, :email, :password, :password_confirmation, :birthdate)
   end
 end
