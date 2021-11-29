@@ -12,9 +12,6 @@ class Api::RunsController < Api::BaseController
     @run = Run.new(run_params)
     hours_minutes = run_params[:time].to_s.split
     average_speed = run_params[:distance] / (hours_minutes[0].to_f + hours_minutes[1].to_f / 60)
-    # puts '------------------------------------'
-    # puts run_params[:distance].class
-    # puts average_speed
     @run.average_speed = average_speed
     respond_to do |format|
 
@@ -24,6 +21,32 @@ class Api::RunsController < Api::BaseController
         format.json { render json: { "OK": false } }
       end
 
+    end
+  end
+
+  def show
+    set_run
+    respond_to do |format|
+      format.json {render json: @run}
+    end
+  end
+
+  def update
+    authorize @run
+    respond_to do |format|
+      if @run.update(run_params)
+        format.json { render :show, status: :ok, location: @run }
+      else
+        format.json { render json: @run.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def destroy
+    authorize @run
+    @run.destroy
+    respond_to do |format|
+      format.json { head :no_content }
     end
   end
 
