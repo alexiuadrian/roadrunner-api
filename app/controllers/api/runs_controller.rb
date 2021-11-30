@@ -1,7 +1,10 @@
 class Api::RunsController < Api::BaseController
 
   def index
-    @runs = Run.all
+    @runs = policy_scope(Run).all
+
+    authorize @runs
+
     respond_to do |format|
       format.json {render json: @runs}
     end
@@ -10,6 +13,9 @@ class Api::RunsController < Api::BaseController
   def create
     puts params[:_json]
     @run = Run.new(run_params)
+
+    authorize @run
+
     hours_minutes = run_params[:time].to_s.split
     average_speed = run_params[:distance] / (hours_minutes[0].to_f + hours_minutes[1].to_f / 60)
     @run.average_speed = average_speed
@@ -56,11 +62,12 @@ class Api::RunsController < Api::BaseController
   # Use callbacks to share common setup or constraints between actions.
   def set_run
     @run = Run.find(params[:id])
+    authorize @run
   end
 
   # Only allow a list of trusted parameters through.
   def run_params
-    params.require(:run).permit(:date, :distance, :time)
+    params.require(:run).permit(:date, :distance, :time, :user_id)
   end
 end
 

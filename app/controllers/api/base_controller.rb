@@ -1,31 +1,51 @@
 class Api::BaseController < ActionController::Base
+  include Pundit
   protect_from_forgery unless: -> { request.format.json? }
-  # skip_before_action :verify_authenticity_token
-  # before_action :authenticate_api_token!
 
-  # private
+  def encode_token(payload)
+    JWT.encode(payload, 'yourSecret')
+  end
 
-  # def authenticate_api_token!
-  #   if (user = user_from_token)
-  #     sign_in user, store: false
-  #   else
-  #     head :unauthorized
-  #   end
-  # end
+  def auth_header
+    # { Authorization: 'Bearer <token>' }
+    request.headers['Authorization']
+  end
 
-  # def token_from_header
-  #   request.headers.fetch("Authorization", "").split(" ").last
-  # end
+  def decoded_token
+    if auth_header
+      token = auth_header.split(' ')[1]
+      # header: { 'Authorization': 'Bearer <token>' }
+      begin
+        JWT.decode(token, 'yourSecret', true, algorithm: 'HS256')
+      rescue JWT::DecodeError
+        nil
+      end
+    end
+  end
 
-  # def api_token
-  #   @_api_token ||= LoggedApplication.find_by(token: token_from_header)
-  # end
+  def current_user
+    if decoded_token
+      user_id = decoded_token[0]['user_id']
+      @user = User.find_by(id: user_id)
+    end
+  end
 
-  # def user_from_token
-  #   if api_token.present?
-  #     api_token.touch(:last_used_at)
-  #     api_token.user
-  #   end
-  # end
+  def logged_in?
+    !!current_user
+  end
+
+  def authorized
+    render json: { message: 'Please log in' }, status: :unauthorized unless logged_in?
+  end
+
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+
+  private
+
+  def user_not_authorized
+    respond_to do |format|
+      format.json {render json: {'error_message': 'You are not authorized to access this information'}}
+    end
+  end
 end
 

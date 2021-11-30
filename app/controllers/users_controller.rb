@@ -3,17 +3,24 @@ class UsersController < ApplicationController
 
   def index
     @users = User.all
+
+    authorize @users
+
     render json: @users, status: :ok
   end
 
   # GET /users/{username}
   def show
+    authorize @user
     render json: @user, status: :ok
   end
 
   # REGISTER
   def create
     @user = User.create(user_params)
+
+    authorize @user
+
     if @user.valid?
       token = encode_token({user_id: @user.id})
       render json: {user: @user, token: token}
@@ -24,6 +31,7 @@ class UsersController < ApplicationController
 
   # LOGGING IN
   def login
+
     @user = User.find_by(username: params[:username])
 
     if @user && @user.authenticate(params[:password])
@@ -36,6 +44,7 @@ class UsersController < ApplicationController
 
   # PUT /users/{username}
   def update
+    authorize @user
     unless @user.update(user_params)
       render json: { errors: @user.errors.full_messages },
              status: :unprocessable_entity
@@ -44,6 +53,7 @@ class UsersController < ApplicationController
 
   # DELETE /users/{username}
   def destroy
+    authorize @user
     @user.destroy
   end
 

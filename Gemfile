@@ -45,9 +45,9 @@ gem 'rubocop'
 
 gem 'rack-cors'
 gem 'pundit'
+gem 'rolify'
 
 gem 'jwt'
-gem 'devise-jwt'
 gem 'devise_token_auth'
 gem 'omniauth'
-gem 'stripe'
+
