@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::API
+  require 'pundit'
+
   before_action :authorized
 
   def encode_token(payload)

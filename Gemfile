@@ -47,7 +47,8 @@ gem 'rack-cors'
 gem 'pundit'
 
 gem 'jwt'
-gem 'devise-jwt'
 gem 'devise_token_auth'
 gem 'omniauth'
-gem 'stripe'
+gem 'store_attribute'
+gem 'responders'
+

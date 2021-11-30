@@ -10,10 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_29_222343) do
+ActiveRecord::Schema.define(version: 2021_11_30_064603) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "roles", force: :cascade do |t|
+    t.string "name"
+    t.jsonb "permissions"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "runs", force: :cascade do |t|
     t.datetime "date"
@@ -22,6 +29,8 @@ ActiveRecord::Schema.define(version: 2021_11_29_222343) do
     t.float "average_speed"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_runs_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -31,6 +40,10 @@ ActiveRecord::Schema.define(version: 2021_11_29_222343) do
     t.datetime "birthdate"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "role_id", null: false
+    t.index ["role_id"], name: "index_users_on_role_id"
   end
 
+  add_foreign_key "runs", "users"
+  add_foreign_key "users", "roles"
 end

@@ -1,7 +1,14 @@
-class Api::RunsController < Api::BaseController
+class RunsController < ApplicationController
+  after_action :verify_authorized
+
+  rescue_from Pundit::NotAuthorizedError do
+    puts "Need to login"
+    redirect_to "/auto_login", alert: "You do not have the permission to access this section"
+  end
 
   def index
     @runs = Run.all
+    # authorize @runs
     respond_to do |format|
       format.json {render json: @runs}
     end
@@ -10,6 +17,7 @@ class Api::RunsController < Api::BaseController
   def create
     puts params[:_json]
     @run = Run.new(run_params)
+    # authorize @run
     hours_minutes = run_params[:time].to_s.split
     average_speed = run_params[:distance] / (hours_minutes[0].to_f + hours_minutes[1].to_f / 60)
     @run.average_speed = average_speed
@@ -32,7 +40,7 @@ class Api::RunsController < Api::BaseController
   end
 
   def update
-    authorize @run
+    # authorize @run
     respond_to do |format|
       if @run.update(run_params)
         format.json { render :show, status: :ok, location: @run }
@@ -43,7 +51,7 @@ class Api::RunsController < Api::BaseController
   end
 
   def destroy
-    authorize @run
+    # authorize @run
     @run.destroy
     respond_to do |format|
       format.json { head :no_content }
@@ -56,6 +64,7 @@ class Api::RunsController < Api::BaseController
   # Use callbacks to share common setup or constraints between actions.
   def set_run
     @run = Run.find(params[:id])
+    # authorize @run
   end
 
   # Only allow a list of trusted parameters through.

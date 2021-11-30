@@ -6,4 +6,10 @@ class User < ApplicationRecord
   validates :password,
             length: { minimum: 6 },
             if: -> { new_record? || !password.nil? }
+
+  belongs_to :role
+
+  before_validation do
+    self.role ||= Role.find_by(name: 'user')
+  end
 end
