@@ -1,7 +1,12 @@
 class Api::RunsController < Api::BaseController
 
   def index
-    @runs = policy_scope(Run).all
+    # Filtering by date
+    if run_params[:from_date] && run_params[:to_date]
+      @runs = policy_scope(Run).where(date: run_params[:from_date]..run_params[:to_date])
+    else
+      @runs = policy_scope(Run).all
+    end
 
     authorize @runs
 
@@ -67,8 +72,9 @@ class Api::RunsController < Api::BaseController
 
   # Only allow a list of trusted parameters through.
   def run_params
-    params.require(:run).permit(:date, :distance, :time, :user_id)
+    params.require(:run).permit(:date, :distance, :time, :user_id, :from_date, :to_date)
   end
+
 end
 
 
