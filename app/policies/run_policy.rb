@@ -33,4 +33,8 @@ class RunPolicy < ApplicationPolicy
   def destroy?
     @user.has_any_role? :admin, :user
   end
+
+  def report?
+    @user.has_any_role? :admin, :user
+  end
 end

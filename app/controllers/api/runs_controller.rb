@@ -2,8 +2,8 @@ class Api::RunsController < Api::BaseController
 
   def index
     # Filtering by date
-    if run_params[:from_date] && run_params[:to_date]
-      @runs = policy_scope(Run).where(date: run_params[:from_date]..run_params[:to_date])
+    if params[:from_date] && params[:to_date]
+      @runs = policy_scope(Run).where(date: params[:from_date]..params[:to_date])
     else
       @runs = policy_scope(Run).all
     end
@@ -61,7 +61,29 @@ class Api::RunsController < Api::BaseController
     end
   end
 
-  private
+  def report
+    today = Date.today
+    @runs = @runs = policy_scope(Run).where(date: today.at_beginning_of_week..today.at_end_of_week)
+
+    authorize @runs
+
+    average_speeds = []
+    distances = []
+    @runs.each do |run|
+      average_speeds.push(run.average_speed)
+      distances.push(run.distance)
+    end
+
+    average_speed_per_week = average_speeds.sum(0.0) / average_speeds.size
+    average_distance_per_week = distances.sum(0.0) / distances.size
+
+    respond_to do |format|
+      format.json { render json: {
+        'average_speed': average_speed_per_week,
+        'average_distance': average_distance_per_week
+      } }
+    end
+  end
 
   private
   # Use callbacks to share common setup or constraints between actions.

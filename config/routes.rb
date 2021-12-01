@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   # API routes
   namespace :api, defaults: { format: :json } do
     resources :runs
+    get "/report", to: "runs#report"
   end
 
 end
