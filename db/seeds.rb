@@ -12,8 +12,8 @@ users_manager_role = Role.create(name: 'user_manager')
 
 admin_role = Role.create(name: 'admin')
 
-admin = User.create(username: "admin", password: "admin123", email: "admin@admin.com", birthdate: "26.05.1999")
+admin = User.create(username: "admin", password: "admin123", email: "admin@admin.com")
 admin.add_role :admin
 
-user1 = User.create(username: "adi", password: "123456", email: "adi.alexiu@gmail.com", birthdate: "26.05.1999")
+user1 = User.create(username: "adi", password: "123456", email: "adi.alexiu@gmail.com")
 user1.add_role :user

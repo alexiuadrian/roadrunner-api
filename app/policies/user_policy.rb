@@ -9,10 +9,6 @@ class UserPolicy < ApplicationPolicy
     @user.has_any_role? :admin, :user_manager
   end
 
-  def create?
-    @user.has_any_role? :admin, :user_manager
-  end
-
   def show?
     @user.has_any_role? :admin, :user_manager
   end
