@@ -54,6 +54,7 @@ class Api::RunsController < Api::BaseController
   end
 
   def destroy
+    set_run
     authorize @run
     @run.destroy
     respond_to do |format|
