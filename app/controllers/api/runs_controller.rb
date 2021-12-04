@@ -79,8 +79,8 @@ class Api::RunsController < Api::BaseController
 
     respond_to do |format|
       format.json { render json: {
-        'average_speed': average_speed_per_week,
-        'average_distance': average_distance_per_week
+        'average_speed': average_speed_per_week.round(2),
+        'average_distance': average_distance_per_week.round(2)
       } }
     end
   end
