@@ -43,10 +43,11 @@ class Api::RunsController < Api::BaseController
   end
 
   def update
+    set_run
     authorize @run
     respond_to do |format|
       if @run.update(run_params)
-        format.json { render :show, status: :ok, location: @run }
+        format.json { render json: @run }
       else
         format.json { render json: @run.errors, status: :unprocessable_entity }
       end
