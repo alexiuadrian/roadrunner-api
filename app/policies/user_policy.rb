@@ -21,4 +21,12 @@ class UserPolicy < ApplicationPolicy
     @user.has_any_role? :admin, :user_manager
   end
 
+  def user_roles?
+    @user.has_any_role? :admin, :user_manager
+  end
+
+  def get_user_roles?
+    @user.has_any_role? :admin, :user_manager
+  end
+
 end

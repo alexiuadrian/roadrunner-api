@@ -65,8 +65,7 @@ class Api::RunsController < Api::BaseController
 
   def report
     today = Date.today
-    @runs = @runs = policy_scope(Run).where(date: today.at_beginning_of_week..today.at_end_of_week)
-
+    @runs = policy_scope(Run).all.where(date: (today.at_beginning_of_week - 1.day)..(today.at_end_of_week + 1.day))
     authorize @runs
 
     average_speeds = []
